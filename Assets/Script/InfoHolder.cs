@@ -3,6 +3,7 @@ using UnityEngine;
 public class InfoHolder : MonoBehaviour
 {
     public static InfoHolder Instance; // Singleton pattern
+    public int CurrentLevel;
 
     private void Awake()
     {
