@@ -4,14 +4,23 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Other Reference")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private LayerMask wallLayer; // Assign "Wall" layer in Inspector
+    [SerializeField] private LayerMask eatLayer;
+    [SerializeField] private LayerMask EnemyLayer;
+
+    [Header("Script Reference")]
+    public PlayerStatsManager stats;
+    public LevelTimer levelTimer;
+    public int score;
 
     private Rigidbody2D rb;
     private Vector2 lastInput;
     private Vector2 currentVelocity;
     private bool canChangeDirection = true;
+    private bool IsDead;
 
     private void Awake()
     {
@@ -33,7 +42,7 @@ public class PlayerMovement : MonoBehaviour
     // Store input but don't apply it yet
     private void OnMovementInput(InputAction.CallbackContext context)
     {
-        if (canChangeDirection)
+        if (canChangeDirection && !IsDead)
         {
             lastInput = context.ReadValue<Vector2>().normalized;
             ApplyMovement();
@@ -46,6 +55,15 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = lastInput * moveSpeed;
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (IsEat(collision.gameObject)) 
+        {
+            Debug.Log("Eaten One");
+            score++;
+        }
+    }
+
     // Reset movement on wall collision
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -53,12 +71,34 @@ public class PlayerMovement : MonoBehaviour
         {
             canChangeDirection = true; // Allow new input
         }
+
+        if (isEnemy(collision.gameObject))
+        {
+            IsDead = true; 
+            string time = levelTimer.StopTimer();
+            stats.UpdateScore(score, time);
+            score = 0;
+            levelTimer.ResetTimer();
+
+            //Add Dead Function
+        }
     }
+
+    private bool isEnemy(GameObject obj)
+    {
+        return EnemyLayer == (EnemyLayer | (1 << obj.layer));
+    }
+
 
     // Check if collided object is a wall (via Layer or Tag)
     private bool IsWall(GameObject obj)
     {
         return wallLayer == (wallLayer | (1 << obj.layer));
         // Alternative: return obj.CompareTag("Wall");
+    }
+
+    private bool IsEat(GameObject obj)
+    {
+        return eatLayer == (eatLayer | (1 << obj.layer));
     }
 }

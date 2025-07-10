@@ -5,12 +5,7 @@ public class TurnOnCanvas : MonoBehaviour
     public GameObject SettingsObject;
     public bool SettingsOn;
 
-    private void Start()
-    {
-        SettingsObject.SetActive(false);
-    }
-
-    public void CanvasOn()
+    public void CanvasOn(GameObject SettingsObject)
     {
         SettingsOn = !SettingsOn;
         if (SettingsOn)
