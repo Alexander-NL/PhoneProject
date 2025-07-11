@@ -4,23 +4,27 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    [Header("Other Reference")]
+    [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private InputActionReference moveAction;
-    [SerializeField] private LayerMask wallLayer; // Assign "Wall" layer in Inspector
-    [SerializeField] private LayerMask eatLayer;
-    [SerializeField] private LayerMask EnemyLayer;
+    [SerializeField] private float swipeThreshold = 50f; // Minimum swipe distance in pixels
 
-    [Header("Script Reference")]
+    [Header("Layer Masks")]
+    [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private LayerMask eatLayer;
+    [SerializeField] private LayerMask enemyLayer;
+
+    [Header("References")]
     public PlayerStatsManager stats;
     public LevelTimer levelTimer;
+    public PlayerEvents playerEvents;
     public int score;
 
     private Rigidbody2D rb;
     private Vector2 lastInput;
-    private Vector2 currentVelocity;
+    private Vector2 touchStartPos;
     private bool canChangeDirection = true;
-    private bool IsDead;
+    private bool isDead;
+    private bool isTouching;
 
     private void Awake()
     {
@@ -29,25 +33,53 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnEnable()
     {
-        moveAction.action.Enable();
-        moveAction.action.performed += OnMovementInput;
+        InputSystem.EnableDevice(Touchscreen.current);
     }
 
-    private void OnDisable()
+
+    private void Update()
     {
-        moveAction.action.performed -= OnMovementInput;
-        moveAction.action.Disable();
+        HandleTouchInput();
     }
 
-    // Store input but don't apply it yet
-    private void OnMovementInput(InputAction.CallbackContext context)
+    private void HandleTouchInput()
     {
-        if (canChangeDirection && !IsDead)
+        var touch = Touchscreen.current.primaryTouch;
+
+        if (touch.press.wasPressedThisFrame)
         {
-            lastInput = context.ReadValue<Vector2>().normalized;
-            ApplyMovement();
-            canChangeDirection = false; // Lock until next wall collision
+            touchStartPos = touch.position.ReadValue();
+            isTouching = true;
         }
+
+        if (isTouching && touch.press.wasReleasedThisFrame)
+        {
+            isTouching = false;
+            Vector2 touchEndPos = touch.position.ReadValue();
+            ProcessSwipe(touchEndPos);
+        }
+    }
+
+    private void ProcessSwipe(Vector2 touchEndPos)
+    {
+        if (isDead || !canChangeDirection) return;
+
+        Vector2 swipeDelta = touchEndPos - touchStartPos;
+        if (swipeDelta.magnitude < swipeThreshold) return;
+
+        swipeDelta.Normalize();
+
+        if (Mathf.Abs(swipeDelta.x) > Mathf.Abs(swipeDelta.y))
+        {
+            lastInput = new Vector2(Mathf.Sign(swipeDelta.x), 0); // Left or Right
+        }
+        else
+        {
+            lastInput = new Vector2(0, Mathf.Sign(swipeDelta.y)); // Up or Down
+        }
+
+        ApplyMovement();
+        canChangeDirection = false;
     }
 
     private void ApplyMovement()
@@ -57,44 +89,39 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (IsEat(collision.gameObject)) 
+        if (IsEat(collision.gameObject))
         {
             Debug.Log("Eaten One");
             score++;
         }
     }
 
-    // Reset movement on wall collision
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (IsWall(collision.gameObject))
         {
-            canChangeDirection = true; // Allow new input
+            canChangeDirection = true;
         }
 
-        if (isEnemy(collision.gameObject))
+        if (IsEnemy(collision.gameObject))
         {
-            IsDead = true; 
+            isDead = true;
             string time = levelTimer.StopTimer();
             stats.UpdateScore(score, time);
             score = 0;
             levelTimer.ResetTimer();
-
-            //Add Dead Function
+            playerEvents.PlayersDead.Invoke();
         }
     }
 
-    private bool isEnemy(GameObject obj)
+    private bool IsEnemy(GameObject obj)
     {
-        return EnemyLayer == (EnemyLayer | (1 << obj.layer));
+        return enemyLayer == (enemyLayer | (1 << obj.layer));
     }
 
-
-    // Check if collided object is a wall (via Layer or Tag)
     private bool IsWall(GameObject obj)
     {
         return wallLayer == (wallLayer | (1 << obj.layer));
-        // Alternative: return obj.CompareTag("Wall");
     }
 
     private bool IsEat(GameObject obj)
