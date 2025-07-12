@@ -1,15 +1,29 @@
 using UnityEngine;
-using System; // For TimeSpan
+using System;
+using TMPro;
 
 public class LevelTimer : MonoBehaviour
 {
-    private float _startTime;
-    private float _elapsedTime;
-    private bool _isTimerRunning;
+    private float startTime;
+    private float elapsedTime;
+    private bool isTimerRunning;
+    private float nextUpdateTime;
+
+    [SerializeField] private TMP_Text TimeText;
+    [SerializeField] private float updateInterval = 0.1f;
 
     private void Start()
     {
         StartTimer();
+    }
+
+    private void Update()
+    {
+        if (isTimerRunning && Time.time >= nextUpdateTime)
+        {
+            UpdateTimerDisplay();
+            nextUpdateTime = Time.time + updateInterval;
+        }
     }
 
     /// <summary>
@@ -17,10 +31,11 @@ public class LevelTimer : MonoBehaviour
     /// </summary>
     public void StartTimer()
     {
-        if (!_isTimerRunning)
+        if (!isTimerRunning)
         {
-            _startTime = Time.time - _elapsedTime;
-            _isTimerRunning = true;
+            startTime = Time.time - elapsedTime;
+            isTimerRunning = true;
+            UpdateTimerDisplay();
             Debug.Log("Timer STARTED");
         }
     }
@@ -33,10 +48,10 @@ public class LevelTimer : MonoBehaviour
     /// </returns>
     public string StopTimer()
     {
-        if (_isTimerRunning)
+        if (isTimerRunning)
         {
-            _elapsedTime = Time.time - _startTime;
-            _isTimerRunning = false;
+            elapsedTime = Time.time - startTime;
+            isTimerRunning = false;
             string formattedTime = GetFormattedTime();
             Debug.Log($"Timer STOPPED at: {formattedTime}");
             return formattedTime;
@@ -50,19 +65,12 @@ public class LevelTimer : MonoBehaviour
     /// <param name="keepRunning"></param>
     public void ResetTimer(bool keepRunning = false)
     {
-        _elapsedTime = 0f;
-        _startTime = Time.time;
+        elapsedTime = 0f;
+        startTime = Time.time;
+        UpdateTimerDisplay(); // Immediate update
 
-        if (!keepRunning)
-        {
-            _isTimerRunning = false;
-            Debug.Log("Timer RESET (stopped)");
-        }
-        else
-        {
-            _isTimerRunning = true;
-            Debug.Log("Timer RESET (running)");
-        }
+        isTimerRunning = keepRunning;
+        Debug.Log($"Timer RESET ({(keepRunning ? "running" : "stopped")})");
     }
 
     /// <summary>
@@ -71,8 +79,16 @@ public class LevelTimer : MonoBehaviour
     /// <returns></returns>
     public string GetFormattedTime()
     {
-        float currentTime = _isTimerRunning ? Time.time - _startTime : _elapsedTime;
+        float currentTime = isTimerRunning ? Time.time - startTime : elapsedTime;
         TimeSpan timeSpan = TimeSpan.FromSeconds(currentTime);
         return $"{timeSpan.Minutes:00}:{timeSpan.Seconds:00}";
+    }
+
+    private void UpdateTimerDisplay()
+    {
+        if (TimeText != null)
+        {
+            TimeText.text = GetFormattedTime();
+        }
     }
 }

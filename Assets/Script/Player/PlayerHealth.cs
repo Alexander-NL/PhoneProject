@@ -39,12 +39,7 @@ public class PlayerHealth : MonoBehaviour
             //player Dead function
             playerMovement.IsDead();
 
-            //Update and reset temp score if player dead
-            string time = levelTimer.StopTimer();
-            scoreManager.UpdateScore(coinManager.score, time);
-            coinManager.score = 0;
-            levelTimer.ResetTimer();
-
+            StopSaveTimer();
             //invoke event if player dead
             playerEvents.PlayersDead.Invoke();
         }
@@ -52,6 +47,15 @@ public class PlayerHealth : MonoBehaviour
         {
             RespawnPlayer();
         }
+    }
+
+    public void StopSaveTimer()
+    {
+        //Update and reset temp score if player dead
+        string time = levelTimer.StopTimer();
+        scoreManager.UpdateScore(coinManager.score, time);
+        //coinManager.score = 0;
+        //levelTimer.ResetTimer();
     }
 
     /// <summary>
