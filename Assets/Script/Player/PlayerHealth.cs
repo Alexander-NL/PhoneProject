@@ -27,6 +27,12 @@ public class PlayerHealth : MonoBehaviour
         CurrHP = MaxHP;
     }
 
+    public void ResetHP()
+    {
+        CurrHP = MaxHP;
+        RespawnPlayer();
+    }
+
     /// <summary>
     /// Basic ahh reduce HP function
     /// </summary>

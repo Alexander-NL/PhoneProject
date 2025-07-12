@@ -10,6 +10,7 @@ public class ButtonManager : MonoBehaviour
     [Header("Object Reference")]
     [SerializeField] GameObject UI;
     [SerializeField] GameObject UI2;
+    [SerializeField] GameObject CharacterChoose;
 
     private GameObject infoHolderObject;
 
@@ -38,7 +39,7 @@ public class ButtonManager : MonoBehaviour
         }
         else if (infoHolder.CurrentLevel >= level)
         {
-            changer.ChangeSceneWithFade("SampleScene");
+            CharacterChoose.SetActive(true);
         }
         else
         {

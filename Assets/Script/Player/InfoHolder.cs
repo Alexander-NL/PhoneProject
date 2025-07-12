@@ -5,6 +5,8 @@ public class InfoHolder : MonoBehaviour
     public static InfoHolder Instance; // Singleton pattern
     public int CurrentLevel;
 
+    public int Currency;
+
     private void Awake()
     {
         // Prevent duplicates and set up singleton

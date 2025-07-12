@@ -22,10 +22,15 @@ public class PlayerMovement : MonoBehaviour
     
     private bool isDead;
     private bool isTouching;
+    private bool playerWon;
+
+    public bool isPaused;
+    private Vector2 prePauseVelocity;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerWon = false;
     }
 
 
@@ -39,6 +44,30 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleTouchInput();
     }
+
+    public void PlayerWon()
+    {
+        playerWon = !playerWon;
+    }
+    public void PauseMovement()
+    {
+        if (isPaused) return;
+
+        isPaused = true;
+        prePauseVelocity = rb.linearVelocity;
+        rb.linearVelocity = Vector2.zero;
+        rb.simulated = false;
+    }
+
+    public void ResumeMovement()
+    {
+        if (!isPaused) return;
+
+        isPaused = false;
+        rb.simulated = true;
+        rb.linearVelocity = prePauseVelocity;
+    }
+
 
     /// <summary>
     /// to get the touch & swipe input
@@ -67,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="touchEndPos"></param>
     private void ProcessSwipe(Vector2 touchEndPos)
     {
-        if (isDead || !canChangeDirection) return;
+        if (isPaused || isDead || !canChangeDirection || playerWon) return;
 
         Vector2 swipeDelta = touchEndPos - touchStartPos;
         if (swipeDelta.magnitude < swipeThreshold) return;

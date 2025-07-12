@@ -29,6 +29,12 @@ public class Fruit : MonoBehaviour
         }
     }
 
+    public void TurnedON()
+    {
+        spriteRenderer.enabled = true;
+        box.enabled = true;
+    }
+
     //IEnumerator DelayDisapear()
     //{
     //    yield return new WaitForSeconds(Delay);

@@ -45,6 +45,13 @@ public class PlayerScoreManager : MonoBehaviour
         LoadRecords();
     }
 
+    public void ResetCurrScore()
+    {
+        currentScore = 0;
+        currentTime = "00:00";
+        currentLevel = infoHolder.CurrentLevel;
+    }
+
     public void UpdateScore(int score, string time)
     {
         currentScore = score;

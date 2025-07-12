@@ -10,6 +10,7 @@ public class CoinManger : MonoBehaviour
 
     [Header("Collection Settings")]
     [SerializeField] private GameObject[] collectibles;
+    [SerializeField] private Fruit[] ScriptList;
 
     [Header("Events")]
     public UnityEvent OnAllCollected;
@@ -46,5 +47,23 @@ public class CoinManger : MonoBehaviour
                 return;
             }
         }
+    }
+    public void ResetAllCoins()
+    {
+        // Reset tracking variables
+        remainingCount = collectibles.Length;
+        collectedStatus = new bool[collectibles.Length];
+        score = 0;
+
+        // Call Reset function on each Fruit
+        foreach (Fruit fruit in ScriptList)
+        {
+            if (fruit != null)
+            {
+                fruit.TurnedON(); // Call your reset function
+            }
+        }
+
+        Debug.Log($"Reset all {ScriptList.Length} fruits/coins");
     }
 }
