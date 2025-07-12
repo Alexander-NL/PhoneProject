@@ -7,22 +7,19 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float swipeThreshold = 50f; // Minimum swipe distance in pixels
+    public bool canChangeDirection = true;
 
     [Header("Layer Masks")]
     [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private LayerMask eatLayer;
     [SerializeField] private LayerMask enemyLayer;
 
     [Header("References")]
-    public PlayerStatsManager stats;
-    public LevelTimer levelTimer;
-    public PlayerEvents playerEvents;
-    public int score;
+    public PlayerHealth playerHealth;
 
     private Rigidbody2D rb;
     private Vector2 lastInput;
     private Vector2 touchStartPos;
-    private bool canChangeDirection = true;
+    
     private bool isDead;
     private bool isTouching;
 
@@ -30,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
     }
+
 
     private void OnEnable()
     {
@@ -42,6 +40,9 @@ public class PlayerMovement : MonoBehaviour
         HandleTouchInput();
     }
 
+    /// <summary>
+    /// to get the touch & swipe input
+    /// </summary>
     private void HandleTouchInput()
     {
         var touch = Touchscreen.current.primaryTouch;
@@ -60,6 +61,10 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Check if player is dead before taking swipe input
+    /// </summary>
+    /// <param name="touchEndPos"></param>
     private void ProcessSwipe(Vector2 touchEndPos)
     {
         if (isDead || !canChangeDirection) return;
@@ -87,15 +92,6 @@ public class PlayerMovement : MonoBehaviour
         rb.linearVelocity = lastInput * moveSpeed;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (IsEat(collision.gameObject))
-        {
-            Debug.Log("Eaten One");
-            score++;
-        }
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (IsWall(collision.gameObject))
@@ -105,13 +101,16 @@ public class PlayerMovement : MonoBehaviour
 
         if (IsEnemy(collision.gameObject))
         {
-            isDead = true;
-            string time = levelTimer.StopTimer();
-            stats.UpdateScore(score, time);
-            score = 0;
-            levelTimer.ResetTimer();
-            playerEvents.PlayersDead.Invoke();
+            playerHealth.ReduceHP();
         }
+    }
+
+    /// <summary>
+    /// to turn on the bool since its a private boolean
+    /// </summary>
+    public void IsDead()
+    {
+        isDead = true;  
     }
 
     private bool IsEnemy(GameObject obj)
@@ -122,10 +121,5 @@ public class PlayerMovement : MonoBehaviour
     private bool IsWall(GameObject obj)
     {
         return wallLayer == (wallLayer | (1 << obj.layer));
-    }
-
-    private bool IsEat(GameObject obj)
-    {
-        return eatLayer == (eatLayer | (1 << obj.layer));
     }
 }

@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerStatsManager : MonoBehaviour
+public class PlayerScoreManager : MonoBehaviour
 {
     //NON JSON FILE 
     public int Score;
