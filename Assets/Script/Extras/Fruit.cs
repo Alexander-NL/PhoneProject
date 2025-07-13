@@ -9,6 +9,7 @@ public class Fruit : MonoBehaviour
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] private CoinManger coinManager;
     [SerializeField] private SkillButton skillButton;
+    [SerializeField] SfxUi ui;
 
     [SerializeField] private bool IsTicket;
 
@@ -21,8 +22,9 @@ public class Fruit : MonoBehaviour
             box.enabled = false;
             coinManager?.RegisterCollection(this.gameObject);
         }
-        else
+        else if (IsPlayer(collision.gameObject) && IsTicket)
         {
+            ui.CollectCoinOnClick();
             spriteRenderer.enabled = false;
             box.enabled = false;
             skillButton.SetButtonInteractable(true);

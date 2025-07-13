@@ -8,4 +8,14 @@ public class EnemyTest : MonoBehaviour
         box2d.enabled = !box2d.enabled;
         Debug.Log("Event turned on");
     }
+
+    public void TurnOffBox()
+    {
+        box2d.enabled = false;
+    }
+
+    public void TurnOnBox()
+    {
+        box2d.enabled = true;
+    }
 }

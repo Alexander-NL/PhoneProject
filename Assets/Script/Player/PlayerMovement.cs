@@ -20,9 +20,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 lastInput;
     private Vector2 touchStartPos;
 
-    private bool isDead;
+    public bool isDead;
     private bool isTouching;
-    private bool playerWon;
+    public bool playerWon;
 
     public bool isPaused;
     private Vector2 prePauseVelocity;

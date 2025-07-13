@@ -8,6 +8,8 @@ public class LevelTimer : MonoBehaviour
     private float elapsedTime;
     private bool isTimerRunning;
     private float nextUpdateTime;
+    private bool isPaused;
+    private float pauseStartTime;
 
     [SerializeField] private TMP_Text TimeText;
     [SerializeField] private float updateInterval = 0.1f;
@@ -19,7 +21,7 @@ public class LevelTimer : MonoBehaviour
 
     private void Update()
     {
-        if (isTimerRunning && Time.time >= nextUpdateTime)
+        if (isTimerRunning && !isPaused && Time.time >= nextUpdateTime)
         {
             UpdateTimerDisplay();
             nextUpdateTime = Time.time + updateInterval;
@@ -67,10 +69,54 @@ public class LevelTimer : MonoBehaviour
     {
         elapsedTime = 0f;
         startTime = Time.time;
-        UpdateTimerDisplay(); // Immediate update
+        isPaused = false;
+        UpdateTimerDisplay();
 
         isTimerRunning = keepRunning;
         Debug.Log($"Timer RESET ({(keepRunning ? "running" : "stopped")})");
+    }
+
+
+    /// <summary>
+    /// all bcuz of the stupid bool = !bool situation that i cant prob fix in time
+    /// </summary>
+    //public void ButtonPauseFunction()
+    //{
+    //    if (isPaused)
+    //    {
+    //        ResumeTimer();
+    //    }
+    //    else
+    //    {
+    //        PauseTimer();
+    //    }
+    //}
+
+    /// <summary>
+    /// yep as the name says
+    /// </summary>
+    public void PauseTimer()
+    {
+        if (isTimerRunning && !isPaused)
+        {
+            isPaused = true;
+            pauseStartTime = Time.time;
+            Debug.Log("Timer PAUSED");
+        }
+    }
+
+    /// <summary>
+    /// yep as the name says^2
+    /// </summary>
+    public void ResumeTimer()
+    {
+        if (isPaused)
+        {
+            // Add the pause duration to startTime to compensate
+            startTime += Time.time - pauseStartTime;
+            isPaused = false;
+            Debug.Log("Timer RESUMED");
+        }
     }
 
     /// <summary>

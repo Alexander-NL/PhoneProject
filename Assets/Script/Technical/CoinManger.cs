@@ -1,12 +1,14 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.SocialPlatforms.Impl;
+using TMPro;
 
 public class CoinManger : MonoBehaviour
 {
     [Header("Object Reference")]
     public PlayerScoreManager scoreManager;
+    [SerializeField] private TMP_Text ScoreText;
+    [SerializeField] SfxUi sfx;
 
     [Header("Collection Settings")]
     [SerializeField] private GameObject[] collectibles;
@@ -36,6 +38,8 @@ public class CoinManger : MonoBehaviour
                 collectedStatus[i] = true;
                 remainingCount--;
                 score++;
+                sfx.CollectCoinOnClick();
+                UpdateScore();
 
                 Debug.Log($"Collected: {collectibles.Length - remainingCount}/{collectibles.Length}");
 
@@ -65,5 +69,10 @@ public class CoinManger : MonoBehaviour
         }
 
         Debug.Log($"Reset all {ScriptList.Length} fruits/coins");
+    }
+
+    public void UpdateScore()
+    {
+        ScoreText.text = $"{score}";
     }
 }

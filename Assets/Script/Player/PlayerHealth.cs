@@ -1,8 +1,6 @@
 using System.Collections;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -21,6 +19,10 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private int MaxHP;
     [SerializeField] private int CurrHP;
 
+    [SerializeField] private float MaxHealth = 0.66f;
+    [SerializeField] private float CurrHealth;
+    [SerializeField] private Image HPfull;
+
     private void Start()
     {
         MaxHP = stats.maxHP;
@@ -31,6 +33,28 @@ public class PlayerHealth : MonoBehaviour
     {
         CurrHP = MaxHP;
         RespawnPlayer();
+    }
+
+    private void Update()
+    {
+        UpdateHPUI();
+        HPfull.fillAmount = CurrHealth;
+    }
+
+    public void UpdateHPUI()
+    {
+        if (CurrHP == MaxHP)
+        {
+            CurrHealth = MaxHealth;
+        }
+        else if (CurrHP == 1)
+        {
+            CurrHealth = 0.33f;
+        }
+        else
+        {
+            CurrHealth = 0f;
+        }
     }
 
     /// <summary>

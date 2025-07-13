@@ -127,6 +127,22 @@ public class PlayerScoreManager : MonoBehaviour
         }
     }
 
+    public void FinishLevel()
+    {
+        infoHolder.CurrentLevel = currentLevel + 1;
+        infoHolder.AddCurrency(currentScore);
+
+        if(infoHolder.CurrentLevel < currentLevel + 1)
+        {
+            infoHolder.ProgressToNextLevel();
+        }
+        else
+        {
+            return;
+        }
+        
+    }
+
     private void SaveToFile()
     {
         File.WriteAllText(savePath, JsonUtility.ToJson(saveData, true));
