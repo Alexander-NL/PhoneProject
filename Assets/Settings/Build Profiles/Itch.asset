@@ -24,8 +24,22 @@ MonoBehaviour:
     m_path: Assets/Scenes/Menu.unity
   - m_enabled: 1
     m_path: Assets/Scenes/LevelMenu.unity
-  - m_enabled: 1
+  - m_enabled: 0
     m_path: Assets/Scenes/SampleScene.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/Shop.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/Level1.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/Level2.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/Level3.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/Level4.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/Level5.unity
+  - m_enabled: 1
+    m_path: Assets/Scenes/Level6.unity
   m_ScriptingDefines: []
   m_PlayerSettingsYaml:
     m_Settings:
@@ -40,8 +54,8 @@ MonoBehaviour:
     - line: '|   targetDevice: 2'
     - line: '|   useOnDemandResources: 0'
     - line: '|   accelerometerFrequency: 60'
-    - line: '|   companyName: DefaultCompany'
-    - line: '|   productName: PhoneProject'
+    - line: '|   companyName: TrialAndError'
+    - line: '|   productName: RunBudsRun'
     - line: '|   defaultCursor: {instanceID: 0}'
     - line: '|   cursorHotspot: {x: 0, y: 0}'
     - line: '|   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b:

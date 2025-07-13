@@ -33,7 +33,7 @@ public class ButtonManager : MonoBehaviour
 
     public void CheckUnlocked(int level)
     {
-        if (level > 3)
+        if (level > 6)
         {
             UI2.SetActive(true);
         }
