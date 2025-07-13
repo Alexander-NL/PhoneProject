@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 lastInput;
     private Vector2 touchStartPos;
-    
+
     private bool isDead;
     private bool isTouching;
     private bool playerWon;
@@ -139,7 +139,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void IsDead()
     {
-        isDead = true;  
+        isDead = true;
     }
 
     private bool IsEnemy(GameObject obj)
